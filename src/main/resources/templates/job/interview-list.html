@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-interview')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="#{job.interview.eyebrow}">Interview</p>
+            <h1 th:text="#{job.interview.title}">직무 인터뷰</h1>
+            <p class="page-lead" th:text="#{job.interview.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="card-grid three-up">
+                <article class="content-card interactive interview-card" th:each="interview : ${interviews}">
+                    <p class="eyebrow subtle" th:text="${interview.role}">Role</p>
+                    <h2 th:text="${interview.title}">Title</h2>
+                    <p th:text="${interview.summary}">Summary</p>
+                    <blockquote th:text="${interview.quote}">Quote</blockquote>
+                    <p class="card-person"><strong th:text="${interview.person}">Name</strong></p>
+                    <a class="text-link" th:href="${interview.url}" th:text="#{common.viewInterview}">인터뷰 읽기</a>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-job-detail')">
+<main th:fragment="content">
+    <section class="page-hero page-hero-detail">
+        <div class="shell narrow">
+            <a class="back-link" th:href="${backUrl}" th:text="#{common.backToList}">목록으로 돌아가기</a>
+            <p class="eyebrow" th:text="${role.family}">Family</p>
+            <h1 th:text="${role.title}">Title</h1>
+            <p class="hero-rich" th:utext="${role.heroHtml}">Hero html</p>
+            <p class="page-lead" th:text="${role.summary}">Summary</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell detail-grid">
+            <article class="detail-card">
+                <h2 th:text="#{job.intro.detail.overview}">직무 개요</h2>
+                <p th:text="${role.overview}">Overview</p>
+            </article>
+            <article class="detail-card">
+                <h2 th:text="#{job.intro.detail.skills}">핵심 역량</h2>
+                <ul class="tag-list">
+                    <li th:each="skill : ${role.skills}" th:text="${skill}">Skill</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell detail-grid three-columns">
+            <article class="detail-card">
+                <h2 th:text="#{job.intro.detail.responsibilities}">주요 역할</h2>
+                <ul class="list-stack">
+                    <li th:each="item : ${role.responsibilities}" th:text="${item}">Item</li>
+                </ul>
+            </article>
+            <article class="detail-card">
+                <h2 th:text="#{job.intro.detail.collaboration}">협업 방식</h2>
+                <ul class="list-stack">
+                    <li th:each="item : ${role.collaborations}" th:text="${item}">Item</li>
+                </ul>
+            </article>
+            <article class="detail-card">
+                <h2 th:text="#{job.intro.detail.growth}">성장 포인트</h2>
+                <ul class="list-stack">
+                    <li th:each="item : ${role.growthPoints}" th:text="${item}">Item</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+</main>
+</html>

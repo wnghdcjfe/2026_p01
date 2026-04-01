@@ -1,0 +1,9 @@
+spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+  thymeleaf:
+    cache: false
+server:
+  shutdown: graceful

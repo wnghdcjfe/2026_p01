@@ -1,0 +1,25 @@
+<footer class="site-footer" xmlns:th="http://www.thymeleaf.org" th:fragment="footer">
+    <div class="shell footer-shell">
+        <div class="footer-branding">
+            <a class="brand brand-footer" th:href="@{|/${lang}/home|}">
+                <span class="brand-mark">TH</span>
+                <span class="brand-copy">Talent Hub</span>
+            </a>
+            <p class="footer-description" th:text="#{footer.description}">Brand description</p>
+        </div>
+
+        <div class="footer-links">
+            <section class="footer-group" th:each="group : ${navGroups}">
+                <h2 th:text="${group.label}">Group</h2>
+                <ul>
+                    <li th:each="item : ${group.items}">
+                        <a th:href="${item.url}" th:text="${item.label}">Item</a>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </div>
+    <div class="shell footer-bottom">
+        <p>© <span th:text="${currentYear}">2026</span> Talent Hub. <span th:text="#{footer.copy}">All rights reserved.</span></p>
+    </div>
+</footer>

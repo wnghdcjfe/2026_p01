@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-culture')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="#{culture.working.eyebrow}">Culture</p>
+            <h1 th:text="#{culture.working.title}">일하는 문화</h1>
+            <p class="page-lead" th:text="#{culture.working.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="card-grid three-up">
+                <article class="content-card" th:each="value : ${values}">
+                    <h2 th:text="${value.title}">Value</h2>
+                    <p th:text="${value.summary}">Summary</p>
+                    <ul class="list-stack">
+                        <li th:each="point : ${value.points}" th:text="${point}">Point</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell detail-grid">
+            <article class="detail-card">
+                <h2 th:text="#{culture.working.principles.title}">우리가 일하는 방식</h2>
+                <ul class="list-stack">
+                    <li th:each="item : ${@trustedMessageService.list('culture.working.principles', #locale)}" th:text="${item}">Principle</li>
+                </ul>
+            </article>
+            <article class="detail-card accent-card">
+                <h2 th:text="#{culture.working.note.title}">문화는 제도로 완성됩니다</h2>
+                <p th:text="#{culture.working.note.description}">Description</p>
+                <a class="text-link" th:href="@{|/${lang}/culture/benefits|}" th:text="#{culture.working.note.link}">복지 보기</a>
+            </article>
+        </div>
+    </section>
+</main>
+</html>

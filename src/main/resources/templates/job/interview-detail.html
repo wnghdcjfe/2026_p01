@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-interview-detail')">
+<main th:fragment="content">
+    <section class="page-hero page-hero-detail">
+        <div class="shell narrow">
+            <a class="back-link" th:href="${backUrl}" th:text="#{common.backToList}">목록으로 돌아가기</a>
+            <p class="eyebrow" th:text="${interview.role}">Role</p>
+            <h1 th:text="${interview.title}">Title</h1>
+            <p class="page-lead" th:text="${interview.summary}">Summary</p>
+            <p class="detail-person"><strong th:text="${interview.person}">Name</strong></p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell article-layout">
+            <aside class="quote-card">
+                <p class="eyebrow subtle" th:text="#{job.interview.detail.quote}">Quote</p>
+                <blockquote th:text="${interview.quote}">Quote body</blockquote>
+            </aside>
+            <article class="story-card">
+                <h2 th:text="#{job.interview.detail.story}">Story</h2>
+                <p th:each="paragraph : ${interview.storyParagraphs}" th:text="${paragraph}">Paragraph</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell narrow">
+            <div class="detail-card">
+                <h2 th:text="#{job.interview.detail.takeaways}">Takeaways</h2>
+                <ul class="list-stack">
+                    <li th:each="item : ${interview.takeaways}" th:text="${item}">Takeaway</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

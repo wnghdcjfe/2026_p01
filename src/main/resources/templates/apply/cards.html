@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-apply-cards')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="${sectionPage.eyebrow}">Eyebrow</p>
+            <h1 th:text="${sectionPage.title}">Title</h1>
+            <p class="page-lead" th:text="${sectionPage.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="card-grid three-up">
+                <article class="content-card" th:each="card : ${sectionPage.cards}">
+                    <p class="eyebrow subtle" th:text="${card.eyebrow}">Eyebrow</p>
+                    <h2 th:text="${card.title}">Title</h2>
+                    <p th:text="${card.description}">Description</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell cta-panel compact">
+            <div>
+                <h2 th:text="#{apply.cards.cta.title}">지원 흐름도 함께 확인해 보세요</h2>
+                <p th:text="#{apply.cards.cta.description}">Description</p>
+            </div>
+            <div class="button-row">
+                <a class="button button-primary" th:href="@{|/${lang}/apply/process|}" th:text="#{apply.cards.cta.primary}">채용 절차 보기</a>
+                <a class="button button-secondary" th:href="@{|/${lang}/apply/faq|}" th:text="#{apply.cards.cta.secondary}">FAQ 보기</a>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

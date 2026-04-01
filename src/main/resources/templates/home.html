@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-home')">
+<main th:fragment="content">
+    <section class="hero hero-home">
+        <div class="shell hero-grid">
+            <div class="hero-copy">
+                <p class="eyebrow" th:text="#{home.hero.eyebrow}">Eyebrow</p>
+                <h1 class="hero-title" th:utext="${@trustedMessageService.html('home.hero.titleHtml', #locale)}">Hero</h1>
+                <p class="hero-subtitle" th:text="#{home.hero.subtitle}">Subtitle</p>
+                <p class="hero-description" th:text="#{home.hero.description}">Description</p>
+                <div class="button-row">
+                    <a class="button button-primary" th:href="@{|/${lang}/job/intro|}" th:text="#{home.hero.primaryCta}">직무 소개 보기</a>
+                    <a class="button button-secondary" th:href="@{|/${lang}/apply/process|}" th:text="#{home.hero.secondaryCta}">채용 절차 보기</a>
+                </div>
+            </div>
+            <aside class="hero-panel">
+                <p class="eyebrow subtle" th:text="#{home.hero.panelTitle}">오늘의 탐색 포인트</p>
+                <p class="panel-copy" th:text="#{home.hero.panelCopy}">Panel copy</p>
+                <ul class="panel-list">
+                    <li th:text="#{home.hero.panelItem1}">item</li>
+                    <li th:text="#{home.hero.panelItem2}">item</li>
+                    <li th:text="#{home.hero.panelItem3}">item</li>
+                </ul>
+            </aside>
+        </div>
+    </section>
+
+    <section class="section stats-section">
+        <div class="shell stats-grid">
+            <article class="stat-card" th:each="stat : ${stats}">
+                <p class="stat-value" th:text="${stat.value}">3+</p>
+                <h2 th:text="${stat.label}">Label</h2>
+                <p th:text="${stat.description}">Description</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell">
+            <div class="section-heading">
+                <p class="eyebrow" th:text="#{home.sections.heading.eyebrow}">Explore</p>
+                <h2 th:text="#{home.sections.heading.title}">핵심 메뉴</h2>
+                <p th:text="#{home.sections.heading.lead}">Lead</p>
+            </div>
+            <div class="card-grid four-up">
+                <article class="content-card interactive" th:each="card : ${sectionCards}">
+                    <p class="eyebrow subtle" th:text="${card.eyebrow}">Eyebrow</p>
+                    <h3 th:text="${card.title}">Title</h3>
+                    <p th:text="${card.description}">Description</p>
+                    <a class="text-link" th:href="${card.url}" th:text="${card.actionLabel}">더 보기</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="section-heading compact">
+                <h2 th:text="#{home.roles.heading}">주목할 직무</h2>
+                <p th:text="#{home.roles.lead}">Lead</p>
+            </div>
+            <div class="card-grid three-up">
+                <article class="content-card interactive role-card" th:each="role : ${jobHighlights}">
+                    <p class="eyebrow subtle" th:text="${role.family}">Family</p>
+                    <h3 th:text="${role.title}">Role</h3>
+                    <p th:text="${role.summary}">Summary</p>
+                    <p class="card-focus" th:text="${role.focus}">Focus</p>
+                    <ul class="tag-list">
+                        <li th:each="skill : ${role.skills}" th:text="${skill}">Skill</li>
+                    </ul>
+                    <a class="text-link" th:href="${role.url}" th:text="#{common.viewRole}">직무 보기</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell">
+            <div class="section-heading compact">
+                <h2 th:text="#{home.interviews.heading}">현업 인터뷰</h2>
+                <p th:text="#{home.interviews.lead}">Lead</p>
+            </div>
+            <div class="card-grid two-up">
+                <article class="content-card interactive interview-card" th:each="interview : ${interviewHighlights}">
+                    <p class="eyebrow subtle" th:text="${interview.role}">Role</p>
+                    <h3 th:text="${interview.title}">Interview</h3>
+                    <p th:text="${interview.summary}">Summary</p>
+                    <blockquote th:text="${interview.quote}">Quote</blockquote>
+                    <p class="card-person"><strong th:text="${interview.person}">Name</strong></p>
+                    <a class="text-link" th:href="${interview.url}" th:text="#{common.viewInterview}">인터뷰 읽기</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="section-heading compact">
+                <h2 th:text="#{home.culture.heading}">일하는 문화</h2>
+                <p th:text="#{home.culture.lead}">Lead</p>
+            </div>
+            <div class="card-grid three-up">
+                <article class="content-card" th:each="value : ${cultureHighlights}">
+                    <h3 th:text="${value.title}">Value</h3>
+                    <p th:text="${value.summary}">Summary</p>
+                    <ul class="list-stack">
+                        <li th:each="point : ${value.points}" th:text="${point}">Point</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-surface">
+        <div class="shell">
+            <div class="section-heading compact">
+                <h2 th:text="#{home.process.heading}">채용 절차 미리보기</h2>
+                <p th:text="#{home.process.lead}">Lead</p>
+            </div>
+            <div class="timeline-grid">
+                <article class="timeline-card" th:each="step : ${processSteps}">
+                    <p class="eyebrow subtle" th:text="${step.stage}">STEP</p>
+                    <h3 th:text="${step.title}">Title</h3>
+                    <p th:text="${step.description}">Description</p>
+                    <p class="timeline-note" th:text="${step.note}">Note</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section cta-section">
+        <div class="shell cta-panel">
+            <div>
+                <h2 th:text="#{home.cta.title}">CTA title</h2>
+                <p th:text="#{home.cta.description}">CTA description</p>
+            </div>
+            <div class="button-row">
+                <a class="button button-primary" th:href="@{|/${lang}/apply/process|}" th:text="#{home.cta.primary}">채용 절차 보기</a>
+                <a class="button button-secondary" th:href="@{|/${lang}/apply/faq|}" th:text="#{home.cta.secondary}">FAQ 보기</a>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

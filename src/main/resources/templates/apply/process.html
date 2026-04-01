@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-process')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="#{apply.process.eyebrow}">Apply</p>
+            <h1 th:text="#{apply.process.title}">채용 절차</h1>
+            <p class="page-lead" th:text="#{apply.process.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell timeline-grid">
+            <article class="timeline-card" th:each="step : ${processSteps}">
+                <p class="eyebrow subtle" th:text="${step.stage}">STEP</p>
+                <h2 th:text="${step.title}">Title</h2>
+                <p th:text="${step.description}">Description</p>
+                <p class="timeline-note" th:text="${step.note}">Note</p>
+            </article>
+        </div>
+    </section>
+</main>
+</html>

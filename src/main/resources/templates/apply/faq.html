@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-faq')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="#{apply.faq.eyebrow}">FAQ</p>
+            <h1 th:text="#{apply.faq.title}">자주 묻는 질문</h1>
+            <p class="page-lead" th:text="#{apply.faq.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell faq-shell">
+            <label class="search-label" for="faq-search" th:text="#{apply.faq.searchLabel}">질문 검색</label>
+            <input id="faq-search" class="search-input" type="search" data-faq-search
+                   th:placeholder="#{apply.faq.searchPlaceholder}">
+
+            <div class="faq-groups">
+                <section class="faq-category" data-faq-category th:each="category : ${faqCategories}">
+                    <h2 th:text="${category.title}">Category</h2>
+                    <div class="accordion-list">
+                        <article class="accordion-item" th:each="item : ${category.items}"
+                                 th:attr="data-search=${#strings.toLowerCase(item.question + ' ' + item.answer)}">
+                            <button class="accordion-trigger" type="button" data-accordion-button aria-expanded="false">
+                                <span th:text="${item.question}">Question</span>
+                            </button>
+                            <div class="accordion-panel" hidden>
+                                <p th:text="${item.answer}">Answer</p>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </div>
+
+            <p class="faq-empty" data-faq-empty hidden th:text="#{apply.faq.empty}">검색 결과가 없습니다.</p>
+        </div>
+    </section>
+</main>
+</html>

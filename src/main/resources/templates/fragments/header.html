@@ -1,0 +1,44 @@
+<header class="site-header" xmlns:th="http://www.thymeleaf.org" th:fragment="header">
+    <div class="shell header-shell">
+        <a class="brand" th:href="@{|/${lang}/home|}">
+            <span class="brand-mark">TH</span>
+            <span class="brand-copy">Talent Hub</span>
+        </a>
+
+        <button class="menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false"
+                th:aria-label="#{common.menuToggle}">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="header-nav" id="site-nav" data-menu-panel>
+            <nav class="primary-nav" th:aria-label="#{common.primaryNavigation}">
+                <div class="nav-group" th:each="group : ${navGroups}" th:classappend="${group.active} ? ' is-active'">
+                    <p class="nav-group-title" th:text="${group.label}">Group</p>
+                    <ul class="nav-submenu">
+                        <li th:each="item : ${group.items}">
+                            <a th:href="${item.url}"
+                               th:text="${item.label}"
+                               th:classappend="${item.active} ? ' is-active'"
+                               th:attr="aria-current=${item.active ? 'page' : null}">Item</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="header-actions" th:aria-label="#{common.languageSwitch}">
+                <a class="lang-chip"
+                   th:href="${langSwitchUrls['ko']}"
+                   th:classappend="${lang == 'ko'} ? ' is-active'"
+                   th:attr="aria-current=${lang == 'ko' ? 'true' : null}"
+                   th:text="#{common.lang.ko}">KO</a>
+                <a class="lang-chip"
+                   th:href="${langSwitchUrls['en']}"
+                   th:classappend="${lang == 'en'} ? ' is-active'"
+                   th:attr="aria-current=${lang == 'en' ? 'true' : null}"
+                   th:text="#{common.lang.en}">EN</a>
+            </div>
+        </div>
+    </div>
+</header>

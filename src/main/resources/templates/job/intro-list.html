@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-job')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="#{job.intro.eyebrow}">Job</p>
+            <h1 th:text="#{job.intro.title}">직무 소개</h1>
+            <p class="page-lead" th:text="#{job.intro.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="card-grid three-up">
+                <article class="content-card interactive role-card" th:each="role : ${jobRoles}">
+                    <p class="eyebrow subtle" th:text="${role.family}">Family</p>
+                    <h2 th:text="${role.title}">Title</h2>
+                    <p th:text="${role.summary}">Summary</p>
+                    <p class="card-focus" th:text="${role.focus}">Focus</p>
+                    <ul class="tag-list">
+                        <li th:each="skill : ${role.skills}" th:text="${skill}">Skill</li>
+                    </ul>
+                    <a class="text-link" th:href="${role.url}" th:text="#{common.viewRole}">직무 보기</a>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

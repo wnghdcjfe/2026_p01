@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-benefits')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="#{culture.benefits.eyebrow}">Benefits</p>
+            <h1 th:text="#{culture.benefits.title}">복지 제도</h1>
+            <p class="page-lead" th:text="#{culture.benefits.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="card-grid two-up">
+                <article class="content-card" th:each="group : ${benefitGroups}">
+                    <h2 th:text="${group.title}">Title</h2>
+                    <p th:text="${group.summary}">Summary</p>
+                    <ul class="list-stack">
+                        <li th:each="item : ${group.items}" th:text="${item}">Item</li>
+                    </ul>
+                </article>
+            </div>
+            <p class="section-note" th:text="#{culture.benefits.note}">Note</p>
+        </div>
+    </section>
+</main>
+</html>

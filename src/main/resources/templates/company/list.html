@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout(~{::content}, 'page-section')">
+<main th:fragment="content">
+    <section class="page-hero">
+        <div class="shell narrow">
+            <p class="eyebrow" th:text="${sectionPage.eyebrow}">Eyebrow</p>
+            <h1 th:text="${sectionPage.title}">Title</h1>
+            <p class="page-lead" th:text="${sectionPage.lead}">Lead</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="shell">
+            <div class="card-grid three-up">
+                <article class="content-card" th:each="card : ${sectionPage.cards}">
+                    <p class="eyebrow subtle" th:text="${card.eyebrow}">Eyebrow</p>
+                    <h2 th:text="${card.title}">Title</h2>
+                    <p th:text="${card.description}">Description</p>
+                    <a class="text-link" th:if="${card.url != null}" th:href="${card.url}" th:text="${card.actionLabel}">자세히 보기</a>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

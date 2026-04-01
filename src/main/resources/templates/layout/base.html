@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(mainContent, bodyClass)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${seo.title}">Talent Hub</title>
+    <meta name="description" th:content="${seo.description}">
+    <link rel="canonical" th:href="${canonicalUrl}">
+    <link rel="alternate" hreflang="ko" th:href="${alternateUrls['ko']}">
+    <link rel="alternate" hreflang="en" th:href="${alternateUrls['en']}">
+    <link rel="alternate" hreflang="x-default" th:href="${alternateUrls['x-default']}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" th:content="${seo.title}">
+    <meta property="og:description" th:content="${seo.description}">
+    <meta property="og:url" th:content="${canonicalUrl}">
+    <meta property="og:site_name" content="Talent Hub">
+    <meta property="og:locale" th:content="${lang == 'ko' ? 'ko_KR' : 'en_US'}">
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <script defer th:src="@{/js/site.js}"></script>
+</head>
+<body th:class="${bodyClass}" th:lang="${lang}">
+<a class="skip-link" href="#content" th:text="#{common.skipToContent}">본문으로 건너뛰기</a>
+<div class="site-shell">
+    <header th:replace="fragments/header :: header"></header>
+    <main id="content" class="site-main">
+        <th:block th:replace="${mainContent}"></th:block>
+    </main>
+    <footer th:replace="fragments/footer :: footer"></footer>
+</div>
+</body>
+</html>
