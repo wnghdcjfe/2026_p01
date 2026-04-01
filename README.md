@@ -182,3 +182,157 @@ node scripts/messages-excel.js import --csv ./i18n/messages-for-translators.csv
 - 검색 / 필터 / 페이징 백엔드
 - 관리자 화면
 - 운영용 콘텐츠 관리 워크플로
+
+## 로컬 개발 초기 설정 가이드
+
+아래 순서대로 진행하면 JDK 11 설치부터 IntelliJ 실행까지 한 번에 맞출 수 있습니다.
+
+### 1) JDK 11 설치
+
+이 프로젝트는 **JDK 11 기준**으로 맞춰져 있습니다.
+
+확인:
+
+```bash
+java -version
+```
+
+정상 예시:
+
+```text
+openjdk version "11.x.x"
+```
+
+#### macOS
+
+1. Temurin / Oracle JDK / Amazon Corretto 등 **JDK 11 배포판** 중 하나를 설치합니다.
+2. 설치 후 터미널에서 아래처럼 JDK 11이 잡히는지 확인합니다.
+
+```bash
+java -version
+/usr/libexec/java_home -V
+```
+
+3. 여러 JDK가 설치되어 있다면 필요 시 `JAVA_HOME`을 11로 맞춥니다.
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+```
+
+#### Windows
+
+1. JDK 11 설치 파일(msi/exe)로 설치합니다.
+2. `JAVA_HOME`을 JDK 11 설치 경로로 지정합니다.
+3. `Path`에 `%JAVA_HOME%\\bin`을 추가합니다.
+4. 새 터미널에서 확인합니다.
+
+```bat
+java -version
+echo %JAVA_HOME%
+```
+
+#### Ubuntu / Debian 계열
+
+```bash
+sudo apt update
+sudo apt install openjdk-11-jdk
+java -version
+```
+
+### 2) 프로젝트 최초 실행
+
+저장소 루트에서 아래 명령으로 확인합니다.
+
+```bash
+./mvnw test
+./mvnw spring-boot:run
+```
+
+접속:
+
+- `http://localhost:8080/ko/home`
+- `http://localhost:8080/en/home`
+
+### 3) IntelliJ IDEA 초기 설정
+
+#### 프로젝트 열기
+
+1. IntelliJ IDEA 실행
+2. **Open** 선택
+3. 현재 저장소 루트(`2026_p01`)를 선택
+4. Maven 프로젝트로 인식되면 import/sync 진행
+
+#### Project SDK 설정
+
+1. `File` → `Project Structure`
+2. `Project` 탭에서:
+   - **Project SDK** = 설치한 **JDK 11**
+   - **Project language level** = `11` 또는 `SDK default`
+
+#### Maven 설정
+
+1. `Settings` → `Build, Execution, Deployment` → `Build Tools` → `Maven`
+2. 가능하면 다음 기준으로 맞춥니다.
+   - **JDK for importer** = `Project SDK (JDK 11)`
+   - **Runner JDK** = `Project SDK (JDK 11)`
+3. Maven 변경 사항이 있으면 Reload 합니다.
+
+#### 인코딩 설정
+
+한글 메시지 파일이 있으므로 UTF-8로 맞추는 것이 안전합니다.
+
+1. `Settings` → `Editor` → `File Encodings`
+2. 아래 항목을 모두 `UTF-8`로 설정 권장
+   - Global Encoding
+   - Project Encoding
+   - Default encoding for properties files
+
+### 4) IntelliJ에서 실행하기
+
+#### 방법 A. Spring Boot 메인 클래스 실행
+
+1. `src/main/java/com/talenthub/TalentHubApplication.java` 열기
+2. Run 아이콘 클릭
+
+#### 방법 B. Maven Task로 실행
+
+IntelliJ Maven 창에서:
+
+- `test`
+- `spring-boot:run`
+
+### 5) IntelliJ에서 처음 보면 체크할 항목
+
+- JDK가 11이 아닌 17/21 등으로 잡혀 있지 않은지
+- Maven Import JDK도 11인지
+- `messages_ko.properties`, `messages_en.properties` 인코딩이 UTF-8인지
+- 실행 후 `/ko/home`, `/en/home` 둘 다 열리는지
+
+### 6) 자주 겪는 문제
+
+#### `java version`이 11이 아님
+
+- 터미널의 `JAVA_HOME`이 다른 버전을 가리킬 수 있습니다.
+- IntelliJ Project SDK와 터미널 JDK를 둘 다 확인하세요.
+
+#### IntelliJ에서 Maven sync 실패
+
+- Maven Import JDK를 11로 다시 지정
+- 우측 Maven 패널에서 Reload
+- 필요 시 `.idea` 삭제 후 다시 Open
+
+#### 한글이 깨져 보임
+
+- IntelliJ 파일 인코딩을 UTF-8로 변경
+- Excel 번역 파일은 가능하면 **CSV UTF-8**로 저장
+
+#### 실행은 되는데 페이지가 안 보임
+
+- 먼저 아래 명령으로 기본 검증
+
+```bash
+./mvnw test
+./mvnw spring-boot:run
+```
+
+- 그 다음 브라우저에서 `/ko/home` 경로로 직접 접속해 확인합니다.
