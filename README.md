@@ -1,6 +1,4 @@
-# Talent Hub
-
-`prd.md`를 기반으로 구축한 Spring Boot + Thymeleaf 기반 다국어 채용/브랜딩 사이트입니다.
+# T06
 
 ## 기술 스택
 
@@ -35,7 +33,7 @@
 - Company: 뉴스룸 / 스토리 / 캠퍼스
 - Job: 직무 소개 목록/상세, 직무 인터뷰 목록/상세
 - Culture: 일하는 문화 / 복지 제도
-- Apply: 월간 hy-way / 채용 공고 / 채용 절차 / FAQ
+- Apply: 채용공고
 - 공통 헤더 / 푸터 / 언어 전환 / 모바일 메뉴
 - FAQ 아코디언 + 검색 UI
 - SEO 메타 / canonical / hreflang
@@ -92,16 +90,6 @@ scripts
 
 i18n
 └── messages.csv        # Excel에서 바로 열 수 있는 UTF-8 BOM CSV
-```
-
-## 다국어 / HTML 번역 정책
-
-이 프로젝트는 PRD 요구사항에 맞춰 **문장 완성형 번역**을 사용합니다.
-
-예:
-
-```properties
-home.hero.titleHtml=반도체와 디지털 혁신이 만나는 <br/><strong>당신의 다음 커리어</strong>
 ```
 
 핵심 원칙:
