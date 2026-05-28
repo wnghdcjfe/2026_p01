@@ -8,16 +8,12 @@ import org.springframework.web.servlet.LocaleResolver;
 
 public class PathLocaleResolver implements LocaleResolver {
 
-    private static final Locale DEFAULT_LOCALE = Locale.KOREAN;
-
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
         String path = pathWithinApplication(request);
-        String[] segments = StringUtils.tokenizeToStringArray(path, "/");
-        if (segments.length > 0 && "en".equalsIgnoreCase(segments[0])) {
-            return Locale.ENGLISH;
-        }
-        return DEFAULT_LOCALE;
+        return LocalePolicy.firstPathSegment(path)
+                .map(LocalePolicy::localeForLanguage)
+                .orElse(LocalePolicy.DEFAULT_LOCALE);
     }
 
     @Override

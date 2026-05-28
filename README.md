@@ -9,6 +9,84 @@
 - MessageSource 기반 i18n
 - 정적 CSS / JS
 
+## 현재 아키텍처
+
+이 프로젝트는 **path 기반 locale 라우팅 + Spring MessageSource + Thymeleaf 서버 렌더링** 구조입니다.
+
+### 요청 흐름
+
+```text
+Browser
+  ↓
+LocaleRoutingFilter
+  ↓
+PathLocaleResolver
+  ↓
+RouterController
+  ↓
+SiteContentService / TrustedMessageService
+  ↓
+Thymeleaf templates
+  ↓
+HTML
+```
+
+핵심 규칙:
+
+- URL 첫 segment가 locale이다.
+  - `/ko/...` → 한국어
+  - `/en/...` → 영어
+- 지원 언어는 `ko`, `en`만 허용한다.
+- `/` 또는 지원하지 않는 언어 경로는 `/ko/home`으로 리다이렉트한다.
+- `/api`, `/actuator`, `/robots.txt`, `/sitemap.xml`, 정적 리소스 경로는 page router에 잡히지 않도록 pass-through 한다.
+
+### 책임 분리
+
+| 영역 | 파일 | 책임 |
+| --- | --- | --- |
+| Locale 정책 | `LocalePolicy` | 지원 언어, 기본 locale/path, route pattern, infrastructure path 중앙 관리 |
+| 요청 필터 | `LocaleRoutingFilter` | `/`, 미지원 언어, 대문자 locale canonical redirect 처리 |
+| Locale 해석 | `PathLocaleResolver` | request path 첫 segment를 Spring `Locale`로 변환 |
+| Web 설정 | `WebConfig` | `MessageSource`, `LocaleResolver`, `LocaleRoutingFilter` 등록 |
+| Page routing | `RouterController` | 모든 페이지 route를 담당하는 단일 MVC controller |
+| 콘텐츠 조립 | `SiteContentService` | 메시지 key를 화면용 DTO로 조립 |
+| Trusted HTML | `TrustedMessageService` | 메시지 조회, list 분리, 허용 태그 sanitizing |
+| View | `templates/**` | Thymeleaf HTML 렌더링 |
+
+### i18n 구조
+
+메시지 리소스는 locale별 파일만 사용합니다.
+
+```text
+src/main/resources
+├── messages_ko.properties
+└── messages_en.properties
+```
+
+`messages.properties` 기본 번들은 두지 않습니다. 대신 `WebConfig`에서 `MessageSource`를 `classpath:messages`로 설정하고, `PathLocaleResolver`가 요청 path에 맞는 locale을 제공해 `messages_ko`, `messages_en` 중 하나를 선택하게 합니다.
+
+Thymeleaf에서 `#{...}`로 렌더링하는 문구는 Spring locale을 기준으로 해석됩니다. 예를 들어 `/en/home` 요청은 다음 상태가 함께 맞춰집니다.
+
+```text
+RouterController @PathVariable lang = en
+PathLocaleResolver locale = Locale.ENGLISH
+<html lang="en">
+Thymeleaf #{...} = messages_en.properties
+```
+
+영/한 key 불일치는 `MessageBundleParityTest`가 검증합니다.
+
+### Controller 구조
+
+페이지 컨트롤러는 `RouterController` 하나만 유지합니다.
+
+```text
+src/main/java/com/talenthub/web
+└── RouterController.java
+```
+
+`RouterController`는 `LocalePolicy.SUPPORTED_LANGUAGE_PATH_PATTERN`을 사용해 `/{lang:ko|en}`만 매핑합니다. 따라서 `/api/home`, `/actuator/home` 같은 page 모양의 infrastructure path가 controller에 잘못 잡히지 않습니다.
+
 ## 실행 방법
 
 ```bash
@@ -66,10 +144,10 @@
 
 ```text
 src/main/java/com/talenthub
-├── config      # locale/path routing 설정
+├── config      # locale/path routing, MessageSource, filter 설정
 ├── model       # 화면용 DTO
 ├── service     # 콘텐츠 구성 및 trusted i18n 처리
-└── web         # MVC controller
+└── web         # RouterController 단일 MVC controller
 
 src/main/resources
 ├── messages_ko.properties
@@ -95,12 +173,20 @@ i18n
 핵심 원칙:
 
 - 언어별 문장은 각 언어가 직접 소유합니다.
+- `messages.properties` 기본 번들은 사용하지 않습니다.
+- `messages_ko.properties`, `messages_en.properties`의 key parity를 테스트로 보장합니다.
+- URL locale, Spring locale, HTML `lang`이 같은 값을 가리키도록 path 기반으로 맞춥니다.
 - `<br>`, `<strong>`, `<em>`만 trusted HTML로 허용합니다.
 - 메시지 리소스의 trusted 문자열만 `th:utext` 경로로 렌더링합니다.
 - 사용자 입력/외부 데이터는 raw HTML로 출력하지 않습니다.
 
 관련 구현:
 
+- `LocalePolicy`
+- `LocaleRoutingFilter`
+- `PathLocaleResolver`
+- `WebConfig`
+- `RouterController`
 - `TrustedMessageService`
 - `messages_ko.properties`
 - `messages_en.properties`
@@ -156,9 +242,13 @@ node scripts/messages-excel.js import --csv ./i18n/messages-for-translators.csv
 
 - `/` → `/ko/home` 리다이렉트
 - 미지원 언어 경로 → `/ko/home` 리다이렉트
+- 대문자 locale 경로(`/EN/home`) → canonical lowercase 경로(`/en/home`) 리다이렉트
+- `/api/home`, `/actuator/home`이 page controller에 잡히지 않고 404 처리되는지 확인
 - 영문 홈 trusted HTML 렌더링 확인
+- 국문 홈 trusted HTML 렌더링 확인
 - 상세 페이지 언어 전환 링크 유지 확인
 - FAQ 페이지 렌더링 확인
+- `messages_ko.properties`, `messages_en.properties` key parity 확인
 - sanitizer에서 허용 태그 유지 / 비허용 태그 escape 확인
 
 ## 확장 포인트

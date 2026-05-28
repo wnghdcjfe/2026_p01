@@ -1,31 +1,19 @@
 package com.talenthub.config;
 
 import java.io.IOException;
-import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component
 public class LocaleRoutingFilter extends OncePerRequestFilter {
-
-    private static final Set<String> SUPPORTED_LANGUAGES = Set.of("ko", "en");
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = pathWithinApplication(request);
-        return path.startsWith("/css/")
-                || path.startsWith("/js/")
-                || path.startsWith("/images/")
-                || path.startsWith("/webjars/")
-                || path.startsWith("/error")
-                || path.startsWith("/actuator")
-                || path.startsWith("/.well-known")
-                || "/favicon.ico".equals(path);
+        return LocalePolicy.isInfrastructurePath(path);
     }
 
     @Override
@@ -33,24 +21,29 @@ public class LocaleRoutingFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String path = pathWithinApplication(request);
         if (!StringUtils.hasText(path) || "/".equals(path)) {
-            redirect(request, response, "/ko/home");
+            redirect(request, response, LocalePolicy.DEFAULT_HOME_PATH);
             return;
         }
 
-        String[] segments = StringUtils.tokenizeToStringArray(path, "/");
-        if (segments.length == 0) {
-            redirect(request, response, "/ko/home");
+        String lang = LocalePolicy.firstPathSegment(path).orElse("");
+        if (lang.isEmpty()) {
+            redirect(request, response, LocalePolicy.DEFAULT_HOME_PATH);
             return;
         }
 
-        String lang = segments[0];
-        if (!SUPPORTED_LANGUAGES.contains(lang)) {
-            redirect(request, response, "/ko/home");
+        if (!LocalePolicy.isSupportedLanguage(lang)) {
+            redirect(request, response, LocalePolicy.DEFAULT_HOME_PATH);
             return;
         }
 
-        if (segments.length == 1) {
-            redirect(request, response, "/" + lang + "/home");
+        String normalizedLang = LocalePolicy.normalizeLanguage(lang);
+        if (!lang.equals(normalizedLang)) {
+            redirect(request, response, replaceLanguage(path, normalizedLang));
+            return;
+        }
+
+        if (isLanguageRoot(path, lang)) {
+            redirect(request, response, "/" + normalizedLang + "/home");
             return;
         }
 
@@ -68,5 +61,18 @@ public class LocaleRoutingFilter extends OncePerRequestFilter {
             return uri.substring(contextPath.length());
         }
         return uri;
+    }
+
+    private boolean isLanguageRoot(String path, String lang) {
+        return path.equals("/" + lang) || path.equals("/" + lang + "/");
+    }
+
+    private String replaceLanguage(String path, String normalizedLang) {
+        String withoutLeadingSlash = path.startsWith("/") ? path.substring(1) : path;
+        int slashIndex = withoutLeadingSlash.indexOf('/');
+        if (slashIndex < 0) {
+            return "/" + normalizedLang;
+        }
+        return "/" + normalizedLang + withoutLeadingSlash.substring(slashIndex);
     }
 }

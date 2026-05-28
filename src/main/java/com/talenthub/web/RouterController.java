@@ -1,5 +1,6 @@
 package com.talenthub.web;
 
+import com.talenthub.config.LocalePolicy;
 import com.talenthub.model.SiteViewModels.InterviewDetail;
 import com.talenthub.model.SiteViewModels.JobRoleDetail;
 import com.talenthub.model.SiteViewModels.SeoData;
@@ -20,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-@RequestMapping("/{lang:ko|en}")
-public class SiteController {
+@RequestMapping(LocalePolicy.SUPPORTED_LANGUAGE_PATH_PATTERN)
+public class RouterController {
 
     private final SiteContentService contentService;
 
-    public SiteController(SiteContentService contentService) {
+    public RouterController(SiteContentService contentService) {
         this.contentService = contentService;
     }
 
@@ -123,9 +124,10 @@ public class SiteController {
 
     private void addCommon(Model model, HttpServletRequest request, String lang, Locale locale, SeoData seo) {
         String currentPath = currentPath(request);
+        String normalizedLang = LocalePolicy.normalizeLanguage(lang);
         model.addAttribute("seo", seo);
-        model.addAttribute("lang", lang);
-        model.addAttribute("navGroups", contentService.navigation(locale, lang, currentPath));
+        model.addAttribute("lang", normalizedLang);
+        model.addAttribute("navGroups", contentService.navigation(locale, normalizedLang, currentPath));
         model.addAttribute("langSwitchUrls", languageSwitchUrls(currentPath));
         model.addAttribute("canonicalUrl", absoluteUrl(request, currentPath));
         model.addAttribute("alternateUrls", alternateUrls(request, currentPath));
@@ -138,25 +140,26 @@ public class SiteController {
 
     private Map<String, String> languageSwitchUrls(String currentPath) {
         Map<String, String> switchUrls = new LinkedHashMap<>();
-        switchUrls.put("ko", switchLanguage(currentPath, "ko"));
-        switchUrls.put("en", switchLanguage(currentPath, "en"));
+        switchUrls.put(LocalePolicy.KOREAN_LANGUAGE, switchLanguage(currentPath, LocalePolicy.KOREAN_LANGUAGE));
+        switchUrls.put(LocalePolicy.ENGLISH_LANGUAGE, switchLanguage(currentPath, LocalePolicy.ENGLISH_LANGUAGE));
         return switchUrls;
     }
 
     private Map<String, String> alternateUrls(HttpServletRequest request, String currentPath) {
         Map<String, String> urls = new LinkedHashMap<>();
-        urls.put("ko", absoluteUrl(request, switchLanguage(currentPath, "ko")));
-        urls.put("en", absoluteUrl(request, switchLanguage(currentPath, "en")));
-        urls.put("x-default", absoluteUrl(request, "/ko/home"));
+        urls.put(LocalePolicy.KOREAN_LANGUAGE, absoluteUrl(request, switchLanguage(currentPath, LocalePolicy.KOREAN_LANGUAGE)));
+        urls.put(LocalePolicy.ENGLISH_LANGUAGE, absoluteUrl(request, switchLanguage(currentPath, LocalePolicy.ENGLISH_LANGUAGE)));
+        urls.put("x-default", absoluteUrl(request, LocalePolicy.DEFAULT_HOME_PATH));
         return urls;
     }
 
     private String switchLanguage(String path, String targetLang) {
         String[] segments = StringUtils.tokenizeToStringArray(path, "/");
+        String normalizedTargetLang = LocalePolicy.normalizeLanguage(targetLang);
         if (segments.length == 0) {
-            return "/" + targetLang + "/home";
+            return "/" + normalizedTargetLang + "/home";
         }
-        segments[0] = targetLang;
+        segments[0] = normalizedTargetLang;
         return "/" + String.join("/", segments);
     }
 
